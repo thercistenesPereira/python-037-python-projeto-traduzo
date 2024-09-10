@@ -10,21 +10,19 @@ HISTORY_ENTRY = {
 }
 
 
-def create_admin_user():
+def setup_admin_user():
     user = UserModel(ADMIN_USER)
     user.save()
-    return user
 
 
-def create_history_entry():
+def setup_history_entry():
     history_entry = HistoryModel(HISTORY_ENTRY)
     history_entry.save()
-    return history_entry
 
 
 def test_history_delete(app_test):
-    create_admin_user()
-    create_history_entry()
+    setup_admin_user()
+    setup_history_entry()
 
     history_registry_id = HistoryModel.find_one({"translate_from": "en"}).data[
         "_id"
@@ -32,10 +30,7 @@ def test_history_delete(app_test):
 
     response = app_test.delete(
         f"/admin/history/{history_registry_id}",
-        headers={
-            "Authorization": ADMIN_USER["token"],
-            "User": ADMIN_USER["name"],
-        },
+        headers={"Authorization": "token_secreto123", "User": "Peter"},
     )
     assert response.status_code == 204
 
